@@ -1,8 +1,11 @@
 # BruteJS: Fast web path fuzzer.
 
 BruteJS is a fast web path fuzzer. At this time it's faster than dirb and wfuzz.
+
 #### How much faster is compared with WFuzz or Dirb?:
+
 Using dirb's big.txt dictionary (300 Mbps bandwith internet connection):
+
 | Script | Time to finish |
 |----------|---------|
 | Dirb   |  17 minutes 4 seconds   |
