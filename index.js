@@ -124,19 +124,45 @@ Request.prototype.get = function(callback) {
 }
 
 /*
+	URL Parser
+*/
+
+function urlParser(url){
+	this.url = url;
+}
+
+urlParser.prototype.getPort = function(){
+	protocol = this.url.split(":")[0];
+	switch(protocol) {
+		case "http": return 80;
+								 break;
+		case "https": return 443;
+									break;
+		case "ftp": return 21;
+								break;
+		default: return false;
+						 break;
+	}
+}
+// TODO: URL can contain basic authentication (prot://user:pass@hostname)
+urlParser.prototype.getHostName = function() {
+	hostname = this.url.split("://")[1];
+	return hostname;
+}
+
+/*
 	Bruteforcer class
 */
 
-function Brute(hostname, wordlist) {
+function Brute(url, wordlist) {
 	this.dictionary = new Dictionary(wordlist);
 	this.dictionary.load();
 
-	this.hostname = hostname;
-	this.port = 80
+	this.url = new urlParser(url);
+	this.hostname = this.url.getHostName();
+	this.port = this.url.getPort();
 	
 	this.requestsQueue = new Array();
-
-	this.reQueuedRequests = 0; // Number of requests which needs to be repeated.
 }
 
 Brute.prototype.popRequest = function(callback) {
@@ -165,6 +191,7 @@ Brute.prototype.run = function(requestsPerSecond) {
 
 	console.log("Dictionary length: " + dictLength);
 	console.log("req/sec: " + 1000/timeToWait);
+	console.log("")
 
 	for (i = 0; i < dictLength; i++) {
 		this.pushRequestToQeue(forDictArray[i]);
@@ -184,6 +211,24 @@ Brute.prototype.run = function(requestsPerSecond) {
 	},timeToWait)
 }
 
-brute = new Brute('91.134.143.75','/usr/share/dirb/wordlists/common.txt');
+let url = "";
+let wordlist = "";
+let reqPerSec = 0;
+
+process.argv.forEach(function (val, index, array) {
+	switch(val) {
+		case "-u": url = array[index+1];
+								 break;
+		case "-w": wordlist = array[index+1];
+							 break;
+		case "-r": reqPerSec = array[index+1];
+								break;
+		case "-h": "-u <url> -w <wordlist> -r <requests per second>";
+						 		break;
+	}
+});
+
+brute = new Brute(url,wordlist);
+//'/usr/share/dirb/wordlists/common.txt'
 //brute = new Brute('91.134.143.75','test_wordlist');
-brute.run(300);
+brute.run(reqPerSec);
