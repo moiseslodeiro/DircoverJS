@@ -1,0 +1,27 @@
+{
+  "name": "brutejs",
+  "version": "1.0.0",
+  "description": "Fast web directory discover.",
+  "main": "brute.js",
+  "dependencies": {
+    "google": "^2.1.0",
+    "tree-node": "^0.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dreadlocked/BruteJS.git"
+  },
+  "keywords": [
+    "fuzzer"
+  ],
+  "author": "Gonzalo García",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dreadlocked/BruteJS/issues"
+  },
+  "homepage": "https://github.com/dreadlocked/BruteJS#readme"
+}

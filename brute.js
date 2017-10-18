@@ -39,7 +39,7 @@ Dictionary.prototype.load = function() {
 	HTTP Parser class
 */
 
-function HTTPParser(rawHTTP){
+function HTTPParser(rawHTTP) {
 	this.rawHTTP = rawHTTP;
 	this.headers = new Array();
 	this.body = "";
@@ -150,6 +150,13 @@ urlParser.prototype.getHostName = function() {
 	return hostname;
 }
 
+urlParser.prototype.getPath = function() {
+	hostname = this.getHostName();
+	paths = hostname.split('/');
+	paths = paths.slice(1,paths.length); // Deletes the own hostname
+	return paths;
+}
+
 /*
 	Bruteforcer class
 */
@@ -172,7 +179,7 @@ Brute.prototype.popRequest = function(callback) {
 				callback(req.path,res);
 			});
 	} else {
-		callback('null',false)
+		callback('null',false);
 	}
 }
 
@@ -184,14 +191,14 @@ Brute.prototype.pushRequestToQeue = function(path) {
 Brute.prototype.run = function(requestsPerSecond) {
 	const dictLength = this.dictionary.length();
 	const forDictArray = this.dictionary.getDirArray()
-	var instance = this;
+	let instance = this;
 
-	var timeToWait = 1000/requestsPerSecond;
-	var counter=0;
+	let timeToWait = 1000/requestsPerSecond;
+	let counter = 0;
 
 	console.log("Dictionary length: " + dictLength);
 	console.log("req/sec: " + 1000/timeToWait);
-	console.log("")
+	console.log("");
 
 	for (i = 0; i < dictLength; i++) {
 		this.pushRequestToQeue(forDictArray[i]);
@@ -208,25 +215,105 @@ Brute.prototype.run = function(requestsPerSecond) {
 			}
 		});
 		
-	},timeToWait)
+	},timeToWait);
+}
+
+/* Represents a paths tree */
+function pathTree() {
+	Node = require('tree-node');
+	this.rootNode = new Node('rootPath');
+}
+
+/* Receives a path represented as a string */
+pathTree.prototype.add = function(rawUrl) {
+	let url = new urlParser(rawUrl);
+	let pathArray = url.getPath();
+
+	/* /location/pepito.html */
+	/* /location/pepito/pepito.html */
+	let pathNode = new Node(pathArray[0]);
+	if (this.rootNode.getNode(pathNode.id) == null) {
+		this.rootNode.appendChild(pathNode);
+	} else {
+		pathNode = this.rootNode.getNode(pathNode.id);
+	}
+	
+	if(pathArray.length > 1) {
+		for(i = 1; i < pathArray.length; i++) {
+			childNode = new Node(pathArray[i]);
+			if(pathNode.getNode(childNode.id) == null) {
+				pathNode.appendChild(childNode);
+				pathNode = childNode;
+			} else {		
+				pathNode = pathNode.getNode(childNode.id);
+			}
+		}
+	}
+}
+
+pathTree.prototype.jsonStr = function() {
+	return JSON.stringify(this.rootNode.json);
+}
+
+/* Discovers paths using Google */
+function googlePathDiscover(url) {
+	this.google = require('google');
+	this.url = new urlParser(url);
+	this.hostname = this.url.getHostName();
+	this.pathTree = new pathTree();
+
+	let instance = this;
+
+	this.google.resultsPerPage = 300;
+	this.nextCounter = 0;
+}
+
+googlePathDiscover.prototype.discover = function(callback) {
+	var instance = this;
+	this.google('site:' + this.hostname, function (err, res){
+	  if (err) console.error(err);
+
+	  for (var i = 0; i < res.links.length; ++i) {
+	    var link = res.links[i];
+	    instance.pathTree.add(link.href);
+	  }
+
+	  if (instance.nextCounter < 4) {
+	    instance.nextCounter += 1
+	    if (res.next) res.next()
+	  }
+		callback(instance.pathTree);
+	});
 }
 
 let url = "";
 let wordlist = "";
 let reqPerSec = 0;
-
+/*
 process.argv.forEach(function (val, index, array) {
 	switch(val) {
 		case "-u": url = array[index+1];
-								 break;
+							 break;
 		case "-w": wordlist = array[index+1];
 							 break;
 		case "-r": reqPerSec = array[index+1];
-								break;
+							 break;
 		case "-h": "-u <url> -w <wordlist> -r <requests per second>";
-						 		break;
+						 	 break;
 	}
 });
 
 brute = new Brute(url,wordlist);
-brute.run(reqPerSec);
+brute.run(reqPerSec);*/
+
+googleVar = new googlePathDiscover('https://www.ull.es')
+googleVar.discover(function(pathTree){
+	console.log(pathTree.jsonStr().length);
+})
+
+//console.log(JSON.stringify(googleVar.pathTree.jsonStr()))
+
+/*tr = new pathTree();
+tr.add('https://www.ull.es/publicaciones/latina/2002/latina46enero/4609edo.htm');
+tr.add('https://www.ull.es/publicaciones/pepito/hola/test.html');
+console.log(JSON.stringify(tr.rootNode))*/
