@@ -229,6 +229,4 @@ process.argv.forEach(function (val, index, array) {
 });
 
 brute = new Brute(url,wordlist);
-//'/usr/share/dirb/wordlists/common.txt'
-//brute = new Brute('91.134.143.75','test_wordlist');
 brute.run(reqPerSec);

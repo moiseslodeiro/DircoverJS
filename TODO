@@ -1,0 +1,4 @@
+- HTTP SSL support.
+- Subdirectory exploration.
+- Basic authentication URLs support. (prot://usr:pass@hostname)
+- Create standalone executables.
