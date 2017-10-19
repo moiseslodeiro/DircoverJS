@@ -16,8 +16,6 @@ pathTree.prototype.add = function(rawUrl) {
 	let url = new urlParser(rawUrl);
 	let pathArray = url.getPath();
 
-	/* /location/pepito.html */
-	/* /location/pepito/pepito.html */
 	let pathNode = new Node(pathArray[0]);
 	if (this.rootNode.getNode(pathNode.id) == null) {
 		this.rootNode.appendChild(pathNode);
@@ -26,7 +24,7 @@ pathTree.prototype.add = function(rawUrl) {
 	}
 	
 	if(pathArray.length > 1) {
-		for(i = 1; i < pathArray.length; i++) {
+		for(let i = 1; i < pathArray.length; i++) {
 			childNode = new Node(pathArray[i]);
 			if(pathNode.getNode(childNode.id) == null) {
 				pathNode.appendChild(childNode);

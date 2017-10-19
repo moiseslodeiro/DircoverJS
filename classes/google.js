@@ -5,23 +5,23 @@ var pathTree = require('./pathTree.js');
 	Discovers paths using Google 
 */
 
-module.exports = googlePathDiscover;
+module.exports = passiveDiscover;
 
-function googlePathDiscover(url) {
+function passiveDiscover(url) {
 	this.google = require('google');
 	this.url = new urlParser(url);
 	this.hostname = this.url.getHostName();
 	this.pathTree = new pathTree();
-
-	let instance = this;
-
-	this.google.resultsPerPage = 300;
-	this.nextCounter = 0;
 }
 
 // Returns callback with JSON path tree structure.
-googlePathDiscover.prototype.discover = function(callback) {
+passiveDiscover.prototype.google = function(callback) {
+
+	this.google.resultsPerPage = 300;
+	var nextCounter = 0;
+
 	var instance = this;
+
 	this.google('site:' + this.hostname, function (err, res){
 	  if (err) console.error(err);
 
@@ -30,10 +30,16 @@ googlePathDiscover.prototype.discover = function(callback) {
 	    instance.pathTree.add(link.href);
 	  }
 
-	  if (instance.nextCounter < 4) {
-	    instance.nextCounter += 1
+	  if (nextCounter < 4) {
+	  	callback(instance.pathTree);
+	    nextCounter += 1
 	    if (res.next) res.next()
 	  }
-		callback(instance.pathTree);
 	});
+
+}
+
+
+passiveDiscover.prototype.bing = function(callback) {
+	
 }

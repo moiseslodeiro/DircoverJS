@@ -5,6 +5,7 @@
   "main": "brute.js",
   "dependencies": {
     "google": "^2.1.0",
+    "nodejs-bing": "^0.1.0",
     "tree-node": "^0.2.3"
   },
   "devDependencies": {},
