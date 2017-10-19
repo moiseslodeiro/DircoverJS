@@ -1,5 +1,5 @@
 var net = require('net');
-var HTTParser = require('./httpParser.js')
+var HTTPParser = require('./httpParser.js')
 
 /*
 	HTTP Request class.

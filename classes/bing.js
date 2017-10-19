@@ -1,13 +1,17 @@
 const https = require('https');
 var cheerio = require('cheerio');
 var pathTree = require('./pathTree.js');
+var urlParser = require('./urlParser');
 
 module.exports = bing;
 
-function bing(pages,query){
-	this.template_url = 'https://www.bing.com/search?q=site:' + query + '&first=NUM_PAGES&FORM=PERE';
+function bing(pages,siteUrl){
+	this.siteUrl = new urlParser(siteUrl);
+	this.query = this.siteUrl.getHostName();
+
+	this.template_url = 'https://www.bing.com/search?q=site:' + this.query + '&first=NUM_PAGES&FORM=PERE';
 	this.url = "";
-	this.results = new Array();
+
 	this.numPages = pages;
 	this.pt = new pathTree();
 }

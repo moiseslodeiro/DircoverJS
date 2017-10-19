@@ -9,7 +9,6 @@ var HTTPParser = require('./classes/httpParser.js');
 var Request = require('./classes/request.js');
 var urlParser = require('./classes/urlParser.js');
 var Brute = require('./classes/brute.js');
-var passiveDiscover = require('./classes/passiveDiscover.js');
 var bing = require('./classes/bing.js')
 
 
@@ -32,6 +31,13 @@ process.argv.forEach(function (val, index, array) {
 							 break;
 	}
 });
+
+if(passive == true) {
+	b = new bing(10,url);
+	b.discover(function(result){
+		console.log(result.jsonStr())
+	})
+}
 
 brute = new Brute(url,wordlist);
 brute.run(reqPerSec);
