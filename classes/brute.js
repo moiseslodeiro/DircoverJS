@@ -1,28 +1,21 @@
 var request = require('request');
 var lineByLine   = require('n-readlines');
-var sprintf      = require("sprintf-js").sprintf
+var sprintf      = require("sprintf-js").sprintf;
+var Promise      = require('bluebird');
 
 module.exports = Brute;
 
+/*
+	Code structure from: https://github.com/danigargu/urlfuzz
+*/
+
 var wordlist = null;
 var url = null;
-var http_opts = {
-    method: 'GET',
-    url: url,
-    followRedirect: false,
-    form: null,
-    strictSSL: false,
-    proxy: null,
-    timeout: null,
-    headers: null,
-    pool: {
-      maxSockets: 150
-    }
-};
+var httpOptions = {}
 
 function fuzzUrl(path) {
   return new Promise(function(resolve, reject) {
-    var opts = http_opts
+    var opts = httpOptions;
     opts.url = url + path;
     
     request(opts, function(error, res, body) {
@@ -61,9 +54,9 @@ function test(args){
 	}
 }
 
-function Brute(url_,wordlist_) {
+function Brute(url_,wordlist_,options) {
 	url = url_;
-	http_opts.url = url_;
+	httpOptions = options;
 	wordlist = wordlist_;
 }
 

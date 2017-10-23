@@ -44,7 +44,7 @@ bing.prototype.discover = function(callback) {
 			callback(instance.pt);		
 		}
 
-	},700);
+	},400);
 }
 
 bing.prototype.get = function(callback) {
@@ -58,11 +58,3 @@ bing.prototype.get = function(callback) {
 	  	});
 	})
 };
-/* Usage:
-
-b = new bing(1,'www.ull.es');
-b.discover(function(result){
-	console.log(result.jsonStr())
-})
-
-*/
