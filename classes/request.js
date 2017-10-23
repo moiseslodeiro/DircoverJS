@@ -1,5 +1,6 @@
 var net = require('net');
-var HTTPParser = require('./httpParser.js')
+var HTTPParser = require('./httpParser.js');
+var request = require('request');
 
 /*
 	HTTP Request class.
@@ -12,12 +13,39 @@ function Request(port,hostname,path) {
 	this.hostname = hostname;
 	this.path = path;
 	this.defaultTimeout = 3000;
+
+	this.http_opts = {
+    method: 'GET',
+    url: this.hostname + ":" + this.port + "/" + this.path,
+    followRedirect: false,
+    form: null,
+    strictSSL: false,
+    proxy: null,
+    timeout: null,
+    headers: null,
+    pool: {
+      maxSockets: 150
+    }
+  };
 }
 
 //TODO: data event should not be the responsible
 // of print the path found and the response status.
 Request.prototype.get = function(callback) {
-	let connection = new net.Socket();
+
+	let opts = this.http_opts;
+	var instance = this;
+	
+	request(opts, function(error, res, body) {
+      if (!error) {
+        callback(instance.path, true);
+        console.log(res.statusCode + " : " + instance.path);
+      }else{
+        callback(instance.path,false);
+      }
+    });
+
+	/*let connection = new net.Socket();
 	connection.setTimeout(this.defaultTimeout);
 	var instance = this;
 
@@ -58,5 +86,5 @@ Request.prototype.get = function(callback) {
 		}
 		this.destroy(); // kill client after full server's response
 		callback(this.path,true);
-	});
+	});*/
 }

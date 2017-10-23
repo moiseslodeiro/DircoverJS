@@ -4,17 +4,12 @@
 	Author: Gonzalo García
 */
 
-var Dictionary = require('./classes/dictionary.js');
-var HTTPParser = require('./classes/httpParser.js');
-var Request = require('./classes/request.js');
-var urlParser = require('./classes/urlParser.js');
 var Brute = require('./classes/brute.js');
 var bing = require('./classes/bing.js')
 
 
 let url = "";
 let wordlist = "";
-let reqPerSec = 0;
 let passive = false;
 
 process.argv.forEach(function (val, index, array) {
@@ -23,11 +18,9 @@ process.argv.forEach(function (val, index, array) {
 							 break;
 		case "-w": wordlist = array[index+1];
 							 break;
-		case "-r": reqPerSec = array[index+1];
-							 break;
 		case "-p": passive = true;
 							 break;
-		case "-h": "-u <url> -w <wordlist> -r <requests per second> [-p (passive)]";
+		case "-h": "-u <url> -w <wordlist> [-p (passive)]";
 							 break;
 	}
 });
@@ -40,4 +33,4 @@ if(passive == true) {
 }
 
 brute = new Brute(url,wordlist);
-brute.run(reqPerSec);
+brute.run();

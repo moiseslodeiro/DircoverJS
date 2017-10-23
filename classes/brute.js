@@ -1,66 +1,78 @@
-var Dictionary = require('./dictionary.js');
-var urlParser = require('./urlParser.js');
-var Request = require('./request.js');
-
-/*
-	Directory fuzzer.
-*/
+var request = require('request');
+var lineByLine   = require('n-readlines');
+var sprintf      = require("sprintf-js").sprintf
 
 module.exports = Brute;
 
-function Brute(url, wordlist) {
-	this.dictionary = new Dictionary(wordlist);
-	this.dictionary.load();
+var wordlist = null;
+var url = null;
+var http_opts = {
+    method: 'GET',
+    url: url,
+    followRedirect: false,
+    form: null,
+    strictSSL: false,
+    proxy: null,
+    timeout: null,
+    headers: null,
+    pool: {
+      maxSockets: 150
+    }
+};
 
-	this.url = new urlParser(url);
-	this.hostname = this.url.getHostName();
-	this.port = this.url.getPort();
-	
-	this.requestsQueue = new Array();
+function fuzzUrl(path) {
+  return new Promise(function(resolve, reject) {
+    var opts = http_opts
+    opts.url = url + path;
+    
+    request(opts, function(error, res, body) {
+      if (!error){
+        resolve([path, res])
+      }else
+        reject(error)
+    });
+  });
 }
 
-Brute.prototype.popRequest = function(callback) {
-	if(this.requestsQueue.length != 0) {
-		req = this.requestsQueue.pop();
-			req.get(function(res){
-				callback(req.path,res);
-			});
-	} else {
-		callback('null',false)
+function fuzzIterator(cb, end_cb) {
+  readWordlist(wordlist, cb, end_cb);
+}
+
+function readWordlist(filename, cb, end_cb) {
+  var line;
+  var lineNumber = 0;
+  var liner = new lineByLine(filename);
+  while (line = liner.next()) {
+    cb(line.toString('ascii'));
+  }
+  if (end_cb) 
+    end_cb();
+}
+var count = 0;
+
+function test(args){	
+
+	var path = args[0];
+	var res   = args[1];
+	var status = res.statusCode;
+
+	if(res.statusCode != "404") { 
+		console.log("[" + res.statusCode + "] " + url + path)
 	}
 }
 
-Brute.prototype.pushRequestToQeue = function(path) {
-	req = new Request(this.port,this.hostname,path);
-	this.requestsQueue.push(req);
+function Brute(url_,wordlist_) {
+	url = url_;
+	http_opts.url = url_;
+	wordlist = wordlist_;
 }
 
-Brute.prototype.run = function(requestsPerSecond) {
-	const dictLength = this.dictionary.length();
-	const forDictArray = this.dictionary.getDirArray()
-	var instance = this;
-
-	var timeToWait = 1000/requestsPerSecond;
-	var counter=0;
-
-	console.log("Dictionary length: " + dictLength);
-	console.log("req/sec: " + 1000/timeToWait);
-	console.log("")
-
-	for (i = 0; i < dictLength; i++) {
-		this.pushRequestToQeue(forDictArray[i]);
-	}
-
-	setInterval(function() {	
-		if(counter == dictLength){ process.exit(); }
-		
-		instance.popRequest(function(path,response){
-			if(response == false) {
-				instance.pushRequestToQeue(path);
-			}else {
-				counter++;
-			}
-		});
-		
-	},timeToWait)
-}
+Brute.prototype.run = function() {
+	fuzzIterator(function (value) {
+	  fuzzUrl(value)
+	    .then(test)
+	    .catch(function (err) {
+	      console.log(err.message + ' AT ' + value)
+	    })
+	})
+};

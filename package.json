@@ -4,8 +4,11 @@
   "description": "Fast web directory discover.",
   "main": "brute.js",
   "dependencies": {
+    "event-stream": "^3.3.4",
     "google": "^2.1.0",
+    "node-fetch": "^1.7.3",
     "nodejs-bing": "^0.1.0",
+    "request": "^2.83.0",
     "tree-node": "^0.2.3"
   },
   "devDependencies": {},
