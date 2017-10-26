@@ -64,8 +64,8 @@ if(passiveOnly == false) {
 			console.log(result.jsonStr())
 		})
 	}
-
-	var options = {
+	
+	var fuzzerHttoOptions = {
 	    method: 'GET',
 	    url: url,
 	    followRedirect: false,
@@ -79,8 +79,8 @@ if(passiveOnly == false) {
 	    }
 	};
 
-	brute = new Brute(url,wordlist,options);
-	brute.run();
+	/*brute = new Brute(url,wordlist,fuzzerHttpOptions);
+	brute.run();*/
 } else{
 	b = new bing(10,url,pTr);
 	let prettyJsonOptions = {

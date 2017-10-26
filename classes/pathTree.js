@@ -48,10 +48,20 @@ pathTree.prototype.jsonStr = function() {
 	return JSON.stringify(this.rootNode.json);
 }
 
-/*pathTree.prototype.treeView = function(child) {
-	if(child != null) {
-		console.log(child.id)
-		child.childsId.forEach(childN
-		this.treeView(child.nextNode())
+pathTree.prototype.treeView = function(node) {
+	var instance = this;
+	if(node != null) {
+
+		console.log("-".repeat(node.layer()) + "/" + node.id)
+		childsIds = node._childIdsList; //Hijos de node
+		childsIds.forEach(function(childId){
+			if(childId[0] != '-') {
+				instance.treeView(
+					node.getNode(childId)
+				)
+			}
+		})
+	} else {
+			return;
 	}
-}*/
+}
