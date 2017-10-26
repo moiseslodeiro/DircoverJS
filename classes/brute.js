@@ -43,13 +43,13 @@ function readWordlist(filename, cb, end_cb) {
 }
 var count = 0;
 
-function test(args){	
+function processResponse(args){	
 
 	var path = args[0];
 	var res   = args[1];
 	var status = res.statusCode;
 
-	if(res.statusCode != "404") { 
+	if(res.statusCode != "404" && res.statusCode != "500") { 
 		console.log("[" + res.statusCode + "] " + url + path)
 	}
 }
@@ -63,7 +63,7 @@ function Brute(url_,wordlist_,options) {
 Brute.prototype.run = function() {
 	fuzzIterator(function (value) {
 	  fuzzUrl(value)
-	    .then(test)
+	    .then(processResponse)
 	    .catch(function (err) {
 	      console.log(err.message + ' AT ' + value)
 	    })

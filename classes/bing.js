@@ -5,7 +5,7 @@ var urlParser = require('./urlParser');
 
 module.exports = bing;
 
-function bing(pages,siteUrl){
+function bing(pages,siteUrl,pTree){
 	this.siteUrl = new urlParser(siteUrl);
 	this.query = this.siteUrl.getHostName();
 
@@ -13,7 +13,7 @@ function bing(pages,siteUrl){
 	this.url = "";
 
 	this.numPages = pages;
-	this.pt = new pathTree();
+	this.pt = pTree;
 }
 
 /* Returns a pathTree object with the scraped paths*/
@@ -44,7 +44,7 @@ bing.prototype.discover = function(callback) {
 			callback(instance.pt);		
 		}
 
-	},400);
+	},300);
 }
 
 bing.prototype.get = function(callback) {

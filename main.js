@@ -5,13 +5,16 @@
 */
 
 var Brute = require('./classes/brute.js');
-var bing = require('./classes/bing.js')
+var bing = require('./classes/bing.js');
+var pathTree = require('./classes/pathTree.js');
+var prettyjson = require('prettyjson');
 
 
 let url = "";
 let wordlist = "";
 let passive = false;
 let passiveOnly = false;
+var pTr = new pathTree();
 
 let helpText = "\n"+
 "██████╗ ██████╗ ██╗   ██╗████████╗███████╗     ██╗███████╗\n"+
@@ -56,7 +59,7 @@ process.argv.forEach(function (val, index, array) {
 
 if(passiveOnly == false) {
 	if(passive == true) {
-		b = new bing(10,url);
+		b = new bing(10,url,pTr);
 		b.discover(function(result){
 			console.log(result.jsonStr())
 		})
@@ -79,9 +82,14 @@ if(passiveOnly == false) {
 	brute = new Brute(url,wordlist,options);
 	brute.run();
 } else{
-	b = new bing(10,url);
+	b = new bing(10,url,pTr);
+	let prettyJsonOptions = {
+  	noColor: false
+	};
 	b.discover(function(result){
-		console.log(result.jsonStr())
+		//console.log(prettyjson.render(result.json(), prettyJsonOptions))
+		rootNode = result.getRootNode();
+		result.treeView(rootNode);
 	})
 }
 
