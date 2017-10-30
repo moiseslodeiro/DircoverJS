@@ -1,4 +1,4 @@
-# BruteJS: Fast web path fuzzer with passive recognition. Discover directories without target 
+# BruteJS: Fast web path fuzzer with passive recognition.
 
 BruteJS is a fast web path fuzzer. At this time it's faster than dirb and wfuzz.
 
