@@ -2,16 +2,31 @@ var request = require('request');
 var lineByLine   = require('n-readlines');
 var sprintf      = require("sprintf-js").sprintf;
 var Promise      = require('bluebird');
+var colors       = require('colors');
 
 module.exports = Brute;
-
-/*
-	Code structure from: https://github.com/danigargu/urlfuzz
-*/
 
 var wordlist = null;
 var url = null;
 var httpOptions = {}
+
+const LOG_FORMAT = " %1$s         %4$s";
+
+const statusCodes = {
+  200: {'color': colors.green.bold,  'text': 'OK'},
+  204: {'color': colors.grey.bold,   'text': 'Empty'},
+  301: {'color': colors.cyan.bold,   'text': 'Moved'},
+  401: {'color': colors.yellow.bold, 'text': 'Unauth.'},
+  404: {'color': colors.red.bold,    'text': 'NotFound'},
+  500: {'color': colors.blue.bold,   'text': 'SrvError'}
+};
+
+function getColoredCode(statusCode) {
+  if (statusCode in statusCodes)
+    return statusCodes[statusCode].color(statusCode);
+  return colors.yellow(statusCode);
+}
+
 
 function fuzzUrl(path) {
   return new Promise(function(resolve, reject) {
@@ -49,9 +64,14 @@ function processResponse(args){
 	var res   = args[1];
 	var status = res.statusCode;
 
-	if(res.statusCode != "404" && res.statusCode != "500") { 
-		console.log("[" + res.statusCode + "] " + url + path)
+	if(status != "404" && status != "500") {
+    printable = getColoredCode(status) + "  " + url + path;
+    if(status == "301") {
+      printable += '/'
+    }
+    console.log(printable)
 	}
+  
 }
 
 function Brute(url_,wordlist_,options) {

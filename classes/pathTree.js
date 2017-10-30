@@ -51,8 +51,9 @@ pathTree.prototype.jsonStr = function() {
 pathTree.prototype.treeView = function(node) {
 	var instance = this;
 	if(node != null) {
-
-		console.log("-".repeat(node.layer()) + "/" + node.id)
+		if(node.id != "rootPath") {
+			console.log("-".repeat(node.layer()) + "/" + node.id)
+		}
 		childsIds = node._childIdsList; //Hijos de node
 		childsIds.forEach(function(childId){
 			if(childId[0] != '-') {

@@ -14,9 +14,10 @@ let url = "";
 let wordlist = "";
 let passive = false;
 let passiveOnly = false;
+let sockets = 100;
 var pTr = new pathTree();
 
-let helpText = "\n"+
+let logo = "\n"+
 "██████╗ ██████╗ ██╗   ██╗████████╗███████╗     ██╗███████╗\n"+
 "██╔══██╗██╔══██╗██║   ██║╚══██╔══╝██╔════╝     ██║██╔════╝\n"+
 "██████╔╝██████╔╝██║   ██║   ██║   █████╗       ██║███████╗\n"+
@@ -24,8 +25,11 @@ let helpText = "\n"+
 "██████╔╝██║  ██║╚██████╔╝   ██║   ███████╗╚█████╔╝███████║\n"+
 "╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚══════╝ ╚════╝ ╚══════╝\n"+
 "\nODS Dev.\n" +
-"Author: Gonzalo García.\n\n"+
-"Mandatory parameters\n"+
+"Author: Gonzalo García.\n\n";
+
+console.log(logo)
+
+let helpText = "Mandatory parameters\n"+
 "-u <url>		Set the target URL, please specity '/' at the end of the URL\n"+
 "\nActive mode:\n"+
 "-w <wordlist path>	Specify the wordlist to use, common.txt by default\n"+
@@ -36,12 +40,13 @@ let helpText = "\n"+
 "\nExample:\n"+
 "node main.js -u https://example.com/ -w wordlists/big.txt -s 150\n"+
 "node main.js -u https://example.com/ -w wordlists/big.txt -s 150 -p\n"+
-"node main.js -u https://example.com/ -ponly\n"
+"node main.js -u https://example.com/ -ponly\n";
 
 
 process.argv.forEach(function (val, index, array) {
 	switch(val) {
 		case "-u": url = array[index+1];
+				   		 if(url[-1] != '/') { url += '/'}
 							 break;
 		case "-w": wordlist = array[index+1];
 							 break;
@@ -57,15 +62,9 @@ process.argv.forEach(function (val, index, array) {
 	}
 });
 
-if(passiveOnly == false) {
-	if(passive == true) {
-		b = new bing(10,url,pTr);
-		b.discover(function(result){
-			console.log(result.jsonStr())
-		})
-	}
-	
-	var fuzzerHttoOptions = {
+function performActive(){
+	console.log('\nPerfoming active fuzzing'.bold)
+	var fuzzerHttpOptions = {
 	    method: 'GET',
 	    url: url,
 	    followRedirect: false,
@@ -79,17 +78,32 @@ if(passiveOnly == false) {
 	    }
 	};
 
-	/*brute = new Brute(url,wordlist,fuzzerHttpOptions);
-	brute.run();*/
-} else{
-	b = new bing(10,url,pTr);
+	brute = new Brute(url,wordlist,fuzzerHttpOptions);
+	brute.run();
+}
+
+function performPassive(callback) {
+	console.log('Perfoming passive discovery (using Bing, wait a little bit...)'.bold)
+	b = new bing(30,url,pTr);
 	let prettyJsonOptions = {
   	noColor: false
 	};
 	b.discover(function(result){
-		//console.log(prettyjson.render(result.json(), prettyJsonOptions))
 		rootNode = result.getRootNode();
 		result.treeView(rootNode);
+		if(callback != null) {
+			callback();
+		}	
 	})
+}
+
+if(passiveOnly == false) {
+	if(passive == true) {
+		performPassive(performActive);
+	}else{
+		performActive();
+	}
+} else{
+	performPassive(null);
 }
 

@@ -1,4 +1,4 @@
-# BruteJS: Fast web path fuzzer with passive recognition.
+# BruteJS: Fast web path fuzzer with passive recognition. Discover directories without target 
 
 BruteJS is a fast web path fuzzer. At this time it's faster than dirb and wfuzz.
 
@@ -21,13 +21,13 @@ Using dirb's big.txt dictionary (300 Mbps bandwith internet connection and 150 s
 #### Usage example:
 
 ```sh
-node main.js -u "http://www.hostname.com/" -w "/usr/share/dirb/wordlists/common.txt" -s 150
+node main.js -u "http://www.hostname.com/" -w "wordlists/common.txt" -s 150
 ```
 
 Use passive recognition:
 
 ```sh
-node main.js -u "http://www.hostname.com/" -w "/usr/share/dirb/wordlists/common.txt" -s 150 -p
+node main.js -u "http://www.hostname.com/" -w "wordlists/common.txt" -s 150 -p
 ```
 
 Use ONLY passive recognition:

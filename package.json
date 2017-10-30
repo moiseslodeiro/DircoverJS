@@ -4,6 +4,7 @@
   "description": "Fast web directory discover.",
   "main": "brute.js",
   "dependencies": {
+    "colors": "^1.1.2",
     "event-stream": "^3.3.4",
     "google": "^2.1.0",
     "node-fetch": "^1.7.3",
