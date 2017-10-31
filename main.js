@@ -7,14 +7,19 @@
 var Brute = require('./classes/brute.js');
 var bing = require('./classes/bing.js');
 var pathTree = require('./classes/pathTree.js');
+var gathering = require('./classes/gather.js');
 var prettyjson = require('prettyjson');
 
 
 let url = "";
-let wordlist = "";
+let wordlist = "wordlists/common.txt";
 let passive = false;
 let passiveOnly = false;
+let gather = false;
+let gatherOnly = false;
+let fullMode = false;
 let sockets = 100;
+
 var pTr = new pathTree();
 
 let logo = "\n"+
@@ -33,14 +38,19 @@ let helpText = "Mandatory parameters\n"+
 "-u <url>		Set the target URL, please specity '/' at the end of the URL\n"+
 "\nActive mode:\n"+
 "-w <wordlist path>	Specify the wordlist to use, common.txt by default\n"+
-"-s <max_sockets>	Number of simultaneous sockets. Default is 150.\n"+
-"-p 			Passive mode, use Bing to recognize directories too. By default, this mode is disabled\n"+
-"\nOnly passive mode:\n"+
+"-s <max_sockets>	Number of simultaneous sockets. Default is 100.\n"+
+"\nPassive recognition modes:\n"+
+"-p 			Passive directory discovery, use Bing to recognize directories too. By default, this mode is disabled\n"+
+"-g 			Gather information from whois, hosts, dnslookup and subnet calculation.\n"+
+"\nOnly modes:\n"+
 "-ponly Performs only passive recognition\n"+
+"-gonly Performs gathering only\n"+
+"\nFull mode:\n"+
+"-f Performs a big.txt search with 100 sockets, performs information gathering and performs passive directory discovery\n"+
 "\nExample:\n"+
-"node main.js -u https://example.com/ -w wordlists/big.txt -s 150\n"+
-"node main.js -u https://example.com/ -w wordlists/big.txt -s 150 -p\n"+
-"node main.js -u https://example.com/ -ponly\n";
+"Only Fuzz: node main.js -u https://example.com/ -w wordlists/big.txt -s 150\n"+
+"Full discovery: node main.js -u https://example.com/ -w wordlists/big.txt -s 150 -p -g\n"+
+"Only passive path discover: node main.js -u https://example.com/ -ponly\n";
 
 
 process.argv.forEach(function (val, index, array) {
@@ -52,8 +62,14 @@ process.argv.forEach(function (val, index, array) {
 							 break;
 		case "-p": passive = true;
 							 break;
+		case "-g": gather = true;
+							 break;
 		case "-s": sockets = array[index+1];;
 							 break;
+		case "-f": fullMode = array[index+1];;
+							 break;
+		case "-gonly": gatherOnly = true;
+							 		 break;
 		case "-ponly": passiveOnly = true;
 		 					 	   break;
 		case "-h": console.log(helpText);
@@ -62,7 +78,7 @@ process.argv.forEach(function (val, index, array) {
 	}
 });
 
-function performActive(){
+function performActive(callback){
 	console.log('\nPerfoming active fuzzing'.bold)
 	var fuzzerHttpOptions = {
 	    method: 'GET',
@@ -85,25 +101,65 @@ function performActive(){
 function performPassive(callback) {
 	console.log('Perfoming passive discovery (using Bing, wait a little bit...)'.bold)
 	b = new bing(30,url,pTr);
-	let prettyJsonOptions = {
-  	noColor: false
-	};
+
 	b.discover(function(result){
 		rootNode = result.getRootNode();
 		result.treeView(rootNode);
+		
 		if(callback != null) {
 			callback();
 		}	
 	})
 }
 
-if(passiveOnly == false) {
-	if(passive == true) {
-		performPassive(performActive);
-	}else{
-		performActive();
-	}
-} else{
-	performPassive(null);
+function performGathering(callback){
+	console.log('Perfoming information gathering'.bold)
+	g = new gathering(url.slice(0,url.length-1));
+	g.run(function(){
+		if(callback != null) {
+			callback();
+		}
+	});	
 }
 
+// Warning! This code can give you cancer, needs to be changed.
+
+/*if(passiveOnly == false || gatherOnly == false) {
+
+	if(passive == true && gather == false) { // Passive + active mode - gather
+
+		performPassive(performActive);
+
+	} else if(passive == true && gather == true) { // Passive + active + gather
+
+		performPassive(
+			performGathering(
+				performActive()
+			)
+		);
+
+	} else if(passive == false && gather == true){ // -Passive + active + gather
+
+		performPassive(
+			performGathering(null)
+		);
+
+	} else {
+		performActive(null);
+	}
+
+} else { // Only Modes
+	if(passiveOnly == true) {
+		performPassive(null);
+	}
+	if(gatherOnly == true) {
+		performGathering();
+	}
+}*/
+
+performGathering(function(){
+	performPassive(function(){
+		performActive();
+	});
+});
+	

@@ -27,6 +27,18 @@ urlParser.prototype.getHostName = function() {
 	return hostname;
 }
 
+urlParser.prototype.getDomainName = function(){
+	hostname = this.getHostName();
+	commonNames = hostname.split('.'); //['www','example','co','uk']
+	if(commonNames.length > 2) {
+		domainName = commonNames.slice(1,commonNames.length); // delete subdomain
+		domainName = domainName.join('.'); //join string again separated by '.'
+		return domainName;
+	} else {
+		return hostname; 
+	}
+}
+
 urlParser.prototype.getPath = function() {
 	hostname = this.getHostName();
 	paths = hostname.split('/');
