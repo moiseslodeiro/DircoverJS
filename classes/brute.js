@@ -81,7 +81,6 @@ function processResponse(args){
         console.log("[Warning] Server seems to be detecting fuzzy activity, reduce the number of sockets with the options -s.".yellow.bold);
       }
     }
-    
     console.log(printable)
 	}
   
@@ -100,6 +99,7 @@ Brute.prototype.run = function() {
 	    .catch(function (err) {
         if (err.message.includes('ECONNREFUSED')) {
           conRefusedErrorCounter++;
+          // Detects if server doesn't responds.
           if(conRefusedErrorCounter > MAX_ERRORS_ALLOWED) {
             console.log(`[Error] Max connection refusing errors to the server reached (${MAX_ERRORS_ALLOWED}), maybe it uses some kind of IDS/WAF.`.red.bold)
             process.exit();

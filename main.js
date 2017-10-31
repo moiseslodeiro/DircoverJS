@@ -20,6 +20,8 @@ let gatherOnly = false;
 let fullMode = false;
 let sockets = 100;
 
+const BING_MAX_PAGES = 60;
+
 var pTr = new pathTree();
 
 let logo = "\n"+
@@ -100,7 +102,7 @@ function performActive(callback){
 
 function performPassive(callback) {
 	console.log('Perfoming passive discovery (using Bing, wait a little bit...)'.bold)
-	b = new bing(30,url,pTr);
+	b = new bing(BING_MAX_PAGES,url,pTr);
 
 	b.discover(function(result){
 		rootNode = result.getRootNode();
@@ -124,25 +126,27 @@ function performGathering(callback){
 
 // Warning! This code can give you cancer, needs to be changed.
 
-/*if(passiveOnly == false || gatherOnly == false) {
+if(passiveOnly == false && gatherOnly == false) {
 
 	if(passive == true && gather == false) { // Passive + active mode - gather
 
-		performPassive(performActive);
+		performPassive(function(){
+			performActive()
+		});
 
 	} else if(passive == true && gather == true) { // Passive + active + gather
 
-		performPassive(
-			performGathering(
-				performActive()
-			)
-		);
+		performGathering(function(){
+			performPassive(function(){
+				performActive();
+			});
+		});
 
 	} else if(passive == false && gather == true){ // -Passive + active + gather
 
-		performPassive(
+		performPassive(function(){
 			performGathering(null)
-		);
+		});
 
 	} else {
 		performActive(null);
@@ -155,11 +159,6 @@ function performGathering(callback){
 	if(gatherOnly == true) {
 		performGathering();
 	}
-}*/
+}
 
-performGathering(function(){
-	performPassive(function(){
-		performActive();
-	});
-});
 	

@@ -22,16 +22,23 @@ urlParser.prototype.getPort = function(){
 	}
 }
 // TODO: URL can contain basic authentication (prot://user:pass@hostname)
+urlParser.prototype.deleteProtocol = function() {
+	let urlWithoutProtocol = this.url.split("://")[1];
+	return urlWithoutProtocol;
+}
+
 urlParser.prototype.getHostName = function() {
-	hostname = this.url.split("://")[1];
+	let hostname = this.deleteProtocol();
+	hostname = hostname.split('/')[0];
 	return hostname;
 }
 
+
 urlParser.prototype.getDomainName = function(){
-	hostname = this.getHostName();
-	commonNames = hostname.split('.'); //['www','example','co','uk']
+	let hostname = this.getHostName();
+	let commonNames = hostname.split('.'); //['www','example','co','uk']
 	if(commonNames.length > 2) {
-		domainName = commonNames.slice(1,commonNames.length); // delete subdomain
+		let domainName = commonNames.slice(1,commonNames.length); // delete subdomain
 		domainName = domainName.join('.'); //join string again separated by '.'
 		return domainName;
 	} else {
@@ -40,8 +47,8 @@ urlParser.prototype.getDomainName = function(){
 }
 
 urlParser.prototype.getPath = function() {
-	hostname = this.getHostName();
-	paths = hostname.split('/');
+	let urlWithoutProtocol = this.deleteProtocol();
+	let paths = urlWithoutProtocol.split('/');
 	paths = paths.slice(1,paths.length); // Deletes the own hostname
 	return paths;
 }

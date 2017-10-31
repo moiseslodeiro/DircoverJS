@@ -6,7 +6,7 @@ var colors = require('colors');
 	Represents a paths tree 
 */
 const layers = {
-  1: {'color': colors.green },
+  1: {'color': colors.green.bold },
   2: {'color': colors.yellow },
   3: {'color': colors.cyan },
   4: {'color': colors.blue },
@@ -21,10 +21,13 @@ function pathTree() {
 }
 
 /* Receives a path represented as a string */
-pathTree.prototype.add = function(rawUrl) {
+pathTree.prototype.add = function(rawUrl) { 
 	let url = new urlParser(rawUrl);
-	let pathArray = url.getPath();
-	
+	let pathArray = [];
+
+	pathArray.push(url.getHostName());
+	pathArray = pathArray.concat(url.getPath());
+
 	let pathNode = new Node(pathArray[0]);
 	if (this.rootNode.getNode(pathNode.id) == null) {
 		this.rootNode.appendChild(pathNode);
