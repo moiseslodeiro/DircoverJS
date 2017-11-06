@@ -57,8 +57,7 @@ let helpText = "Mandatory parameters\n"+
 
 process.argv.forEach(function (val, index, array) {
 	switch(val) {
-		case "-u": url = array[index+1];
-				   		 if(url[-1] != '/') { url += '/'}
+		case "-u": url = array[index+1];  		 
 							 break;
 		case "-w": wordlist = array[index+1];
 							 break;
@@ -77,7 +76,12 @@ process.argv.forEach(function (val, index, array) {
 		case "-h": console.log(helpText);
 							 process.exit();
 							 break;
+		default: url = array[index];
+						 break;
 	}
+
+	if(url[-1] != '/') { url += '/'}
+		
 });
 
 function performActive(callback){
