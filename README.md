@@ -1,4 +1,4 @@
-# BruteJS: Fast web path fuzzer with passive recognition.
+# DircoverJS: Fast web path fuzzer with passive recognition.
 
 BruteJS is a fast web path fuzzer. At this time it's faster than dirb and wfuzz.
 
@@ -10,7 +10,7 @@ Using dirb's big.txt dictionary (300 Mbps bandwith internet connection and 150 s
 |----------|---------|
 | Dirb   |  ~17 minutes   |
 | Wfuzz   | ~1 minute 40 seconds   |
-| BruteJS   | ~10 seconds   |
+| DircoverJS   | ~10 seconds   |
 
 
 #### Requires:
