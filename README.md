@@ -12,8 +12,11 @@ Using dirb's big.txt dictionary (300 Mbps bandwith internet connection and 150 s
 | Wfuzz   | ~1 minute 40 seconds   |
 | DircoverJS   | ~10 seconds   |
 
+#### Installation:
 
-#### Requires:
+Download binaries/dircover01.zip and unzip it, then just run ./install-linux.sh.
+
+#### Developers requires:
 | Software | Version |
 |----------|---------|
 | NodeJS   | Tested on 8.7.0   |
@@ -21,19 +24,19 @@ Using dirb's big.txt dictionary (300 Mbps bandwith internet connection and 150 s
 #### Usage example:
 
 ```sh
-node main.js -u "http://www.hostname.com/" -w "wordlists/common.txt" -s 150
+dircover -u "https://www.hostname.com/"
 ```
 
 Use passive recognition:
 
 ```sh
-node main.js -u "http://www.hostname.com/" -w "wordlists/common.txt" -s 150 -p
+dircover "https://www.hostname.com/" -p
 ```
 
 Use ONLY passive recognition:
 
 ```sh
-node main.js -u "http://www.hostname.com/" -ponly
+dircover -u "http://www.hostname.com/" -ponly
 ```
 
 
