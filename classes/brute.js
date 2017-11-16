@@ -69,8 +69,8 @@ function processResponse(args){
 
 	if(status != "404" && status != "500") {
     printable = getColoredCode(status) + "  " + url + path;
-    if(status == "301")
-      printable += '/'
+    //if(status == "301")
+      //printable += ''
     
     if(path == 'robots.txt')
       printable += "  <- robots.txt found, maybe it contains some interesting paths".green.bold
