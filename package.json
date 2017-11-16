@@ -7,11 +7,13 @@
     "colors": "^1.1.2",
     "event-stream": "^3.3.4",
     "google": "^2.1.0",
+    "nexe": "^2.0.0-rc.20",
     "node-fetch": "^1.7.3",
     "nodejs-bing": "^0.1.0",
     "prettyjson": "^1.2.1",
     "request": "^2.83.0",
-    "tree-node": "^0.2.3"
+    "tree-node": "^0.2.3",
+    "n-readlines": "^0.2.8"
   },
   "devDependencies": {},
   "scripts": {

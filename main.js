@@ -12,13 +12,13 @@ var prettyjson = require('prettyjson');
 
 
 let url = "";
-let wordlist = "wordlists/common.txt";
+let wordlist = "wordlists/big.txt";
 let passive = false;
 let passiveOnly = false;
 let gather = false;
 let gatherOnly = false;
 let fullMode = false;
-let sockets = 100;
+let sockets = 150;
 
 const BING_MAX_PAGES = 60;
 
@@ -76,13 +76,11 @@ process.argv.forEach(function (val, index, array) {
 		case "-h": console.log(helpText);
 							 process.exit();
 							 break;
-		default: url = array[index];
-						 break;
 	}
-
-	if(url[-1] != '/') { url += '/'}
 		
 });
+
+if(url[-1] != '/') { url += '/'}
 
 function performActive(callback){
 	console.log('\nPerfoming active fuzzing'.bold)
